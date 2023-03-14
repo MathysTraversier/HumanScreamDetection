@@ -3,8 +3,10 @@ import struct
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import statistics
+import time
 
-%matplotlib tk
+tinit = time.time()
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -14,7 +16,7 @@ RATE = 44100
 SEUIL = 50
 
 moyenneDb = 0
-nbEchantillon = 0
+echantillon = []
 
 p = pyaudio.PyAudio()
 
@@ -40,8 +42,12 @@ while True:
     data_np = np.frombuffer(data, dtype=np.int16)
     # Calcul du niveau de décibels
     db = 20 * np.log10(np.abs(data_np).max() / 32767) + 70
-    nbEchantillon = nbEchantillon + 1
-    moyenneDb = (moyenneDb * (nbEchantillon - 1) + db) / nbEchantillon
+    t=time.time()
+    #Garder une fenêtre d'échantillon de 2 minutes
+    if(t - tinit > 120):
+        echantillon.remove(1)
+    echantillon.append(db)
+    moyenneDb = statistics.mean(echantillon)
     if(db > moyenneDb*(1+SEUIL/100)):
         print("Attention, le seuil a été dépassé !")
     # Mise à jour du barplot
