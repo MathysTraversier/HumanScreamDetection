@@ -1,8 +1,6 @@
 import pyaudio
-import struct
 import numpy as np
 import matplotlib.pyplot as plt
-import math
 import statistics
 import time
 
@@ -13,6 +11,7 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 
+#Seuil de dépassement de décibels en pourcentage
 SEUIL = 50
 
 moyenneDb = 0
